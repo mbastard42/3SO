@@ -1,0 +1,168 @@
+networks:
+  dev:
+    driver: bridge
+
+services:
+
+  lgtm:
+
+    container_name: lgtm
+    image: grafana/otel-lgtm
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SERVER_ROOT_URL: http://localhost:3001
+    networks: [dev]
+    ports:
+      - "3001:3000" # Grafana UI
+      - "3100:3100" # Loki endpoint
+
+  # pgadmin:
+
+  #   container_name: pgadmin
+  #   image: dpage/pgadmin4
+  #   volumes:
+  #     - ./databases/servers.json:/pgadmin4/servers.json
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: password
+  #     PGADMIN_SERVER_JSON_FILE: '/pgadmin4/servers.json'
+  #   networks: [dev]
+  #   ports: ["4200:80"]
+  #   depends_on: [postgres]
+  #   logging:
+  #     driver: loki
+  #     options:
+  #       loki-url: "http://localhost:3100/loki/api/v1/push"
+  #       loki-external-labels: "service=pgadmin,env=dev"
+
+  frontend:
+
+    container_name: frontend
+    build:
+      context: ./frontend/
+      target: dev
+    develop:
+      watch:
+        - path: ./frontend/svelte/src
+          action: sync
+          target: /app/src
+        - path: ./frontend/svelte/package.json
+          action: rebuild
+    networks: [dev]
+    ports: ["5173:5173"]
+    command:  ["sh","-lc","npm install && npm run dev"]
+    depends_on: [backend]
+    restart: on-failure
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=frontend,env=dev"
+
+  backend:
+
+    container_name: backend
+    build:
+      context: ./backend/
+      target: dev
+    develop:
+      watch:
+        - path: ./backend/symfony/src
+          action: sync
+          target: /app/src
+        - path: ./backend/symfony/config
+          action: rebuild
+        - path: ./backend/symfony/composer.json
+          action: rebuild
+    networks: [dev]
+    ports: ["8000:8000"]
+    command:  ["php","-S", "0.0.0.0:8000", "-t", "public"]
+    depends_on: [postgres, minio, admin]
+    restart: on-failure
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=backend,env=dev"
+
+  postgres:
+
+    container_name: postgres
+    build:
+      context: ./databases/postgres/
+      target: dev
+    develop:
+      watch:
+        - path: ./databases/postgres/init/
+          action: rebuild
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PG_SYMFONY_DB: ${PG_SYMFONY_DB}
+      PG_SYMFONY_USER: ${PG_SYMFONY_USER}
+      PG_SYMFONY_PASSWORD: ${PG_SYMFONY_PASSWORD}
+      PG_ODOO_DB: ${PG_ODOO_DB}
+      PG_ODOO_USER: ${PG_ODOO_USER}
+      PG_ODOO_PASSWORD: ${PG_ODOO_PASSWORD}
+    networks: [dev]
+    ports: ["${POSTGRES_PORT}:${POSTGRES_PORT}"]
+    depends_on: [lgtm]
+    restart: on-failure
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=postgres,env=dev"
+
+  minio:
+
+    container_name: minio
+    build:
+      context: ./databases/minio/
+      target: dev
+    environment:
+      MINIO_ENDPOINT: ${MINIO_EXT_ENDPOINT}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      MINIO_DATA_PATH: ${MINIO_DATA_PATH}
+    networks: [dev]
+    ports:
+      - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
+      - "${MINIO_API_PORT}:${MINIO_API_PORT}"
+    command: ["server", "${MINIO_DATA_PATH}", "--console-address", ":${MINIO_CONSOLE_PORT}"]
+    depends_on: [lgtm]
+    restart: on-failure
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=minio,env=dev"
+
+  admin:
+
+    container_name: admin
+    build:
+      context: ./admin/
+      target: dev
+    environment:
+      HOST: ${POSTGRES_HOST}
+      USER: ${PG_ODOO_USER}
+      PASSWORD: ${PG_ODOO_PASSWORD}
+      DATABASE: ${PG_ODOO_DB}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    networks: [dev]
+    ports: ["8069:8069"]
+    command: ["odoo", "-d", "${PG_ODOO_DB}", "-i", "base,server_environment,fs_storage,fs_attachment", "-c", "/etc/odoo/odoo.conf"]
+    depends_on: [lgtm, postgres, minio]
+    restart: on-failure
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=admin,env=dev"

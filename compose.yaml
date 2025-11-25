@@ -1,0 +1,17 @@
+services:
+  web:
+    image: odoo:19.0
+    depends_on:
+      - mydb
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=mydb
+      - USER=odoo
+      - PASSWORD=myodoo
+  mydb:
+    image: postgres:18
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=myodoo
+      - POSTGRES_USER=odoo
