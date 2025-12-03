@@ -3,6 +3,7 @@ SHELL := /bin/bash
 ENV_DEV ?= .env.dev
 COMPOSE := docker compose --project-directory . -f compose.yaml -f compose.dev.yaml --env-file $(ENV_DEV)
 UP := up --build --remove-orphans
+RUN := run --rm
 DOWN := down --remove-orphans
 
 # UTILS
@@ -35,7 +36,7 @@ restart: down app
 
 minio: lgtm
 	$(COMPOSE) $(UP) -d minio
-	$(COMPOSE) run --rm minio-init
+	$(COMPOSE) $(RUN) minio-init
 
 postgres: lgtm
 	$(COMPOSE) $(UP) -d postgres

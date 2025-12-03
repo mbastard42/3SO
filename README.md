@@ -1,43 +1,61 @@
 # ecommerce-infra-template
 
-```
-npx sv create
+A reproducible Dev/Prod infrastructure template showcasing my approach to building small, reliable, multi-service systems.
 
-┌  Welcome to the Svelte CLI! (v0.9.14)
-│
-◇  Where would you like your project to be created?
-│  ./svelte
-│
-◇  Which template would you like?
-│  SvelteKit minimal
-│
-◇  Add type checking with TypeScript?
-│  Yes, using TypeScript syntax
-│
-◆  Project created
-│
-◇  What would you like to add to your project? (use arrow keys / space bar)
-│  eslint, vitest, playwright, tailwindcss, sveltekit-adapter, devtools-json, paraglide
-│
-◇  sveltekit-adapter: Which SvelteKit adapter would you like to use?
-│  static
-│
-◇  vitest: What do you want to use vitest for?
-│  unit testing, component testing
-│
-◇  paraglide: Which languages would you like to support? (e.g. en,de-ch)
-│  fr
-│
-◇  paraglide: Do you want to include a demo?
-│  No
-│
-◇  tailwindcss: Which plugins would you like to add?
-│  forms
-│
-◆  Successfully setup add-ons
-│
-◇  Which package manager do you want to install dependencies with?
-│  npm
-│
-◇  Installing dependencies with npm...
-```
+This project focuses on architecture, orchestration and DevOps practices — not on business logic.
+
+It represents the choices I’m learning to make when designing container-based environments that must be clear, maintainable, and consistent across development and production.
+
+**This README provides a compact overview — the documentation will go deeper into the engineering details.**
+
+## Purpose
+
+The goal of this repository is to provide a reliable and consistent foundation for multi-service e-commerce projects by focusing on:
+
+### Environment consistency (Dev → Prod)
+
+Same architecture, same images, predictable behavior.
+Development supports granular rebuilds; production ensures safe, persistent restarts.
+
+### Idempotent service initialization
+
+PostgreSQL, MinIO, and Odoo initialize only when needed, making the system stable even after repeated rebuilds or unexpected interruptions.
+
+### Clear network and responsibility boundaries
+
+Each component (frontend, backend, admin/Odoo, Postgres, MinIO, observability stack) lives in its own dedicated network with explicitly defined access paths.
+
+### Modularity & extendability
+
+The stack is intentionally simple but ready to grow:
+
+- Odoo Community as an ERP-style back-office
+- Symfony API backend
+- SvelteKit storefront
+- PostgreSQL (truth/mirror)
+- MinIO S3 file storage
+
+## What this project demonstrates
+
+This repository reflects my ability to:
+
+- design multi-service infra with containerized boundaries
+- structure Dev/Prod architectures with minimal drift
+- manage idempotent and restart-safe initialization flows
+- configure isolated networks for controlled communication
+- handle credentials and storage endpoints consistently across services
+- automate workflows through Makefile-driven commands
+- integrate observability where useful (and skip it where not needed)
+- keep the system understandable, explicit, and maintainable
+
+The goal is not to show a large platform, but a thoughtful, reproducible infrastructure with real DevOps constraints in mind.
+
+## Documentation
+
+If you’d like to dive deeper, the full technical documentation covers:
+
+- architecture diagrams
+- service-by-service breakdown
+- configuration strategies
+- deployment patterns (including NixOS)
+- improvements and next steps
