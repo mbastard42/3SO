@@ -19,6 +19,8 @@
         ./ops/hosts/gandi/hardware-configuration.nix
         ./ops/hosts/gandi/gandicloud.nix
         ./ops/envs/dev/host.nix
+
+        (import ./services/frontend/frontend.nix).modules.dev
       ];
     };
   };

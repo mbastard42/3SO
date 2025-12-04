@@ -23,6 +23,16 @@
     };
   };
 
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc
+      zlib
+      openssl
+      curl
+    ];
+  };
+
   environment.systemPackages = with pkgs; [
     git
     curl

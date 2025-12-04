@@ -22,10 +22,10 @@
         '';
       };
     in {
-      services.frontend.staticRoot = "${frontendStatic}/build";
+      _module.args.frontendStaticRoot = "${frontendStatic}/build";
     };
 
-    dev = args@{ config, pkgs, lib, ... }:
+    dev = args@{ config, pkgs, lib, repoDir, ... }:
       lib.mkMerge [
         (common args)
         {
@@ -34,9 +34,15 @@
             wantedBy = [ "multi-user.target" ];
             after = [ "network-online.target" ];
 
+            path = [
+              pkgs.bash
+              pkgs.nodejs_22
+            ];
+
             serviceConfig = {
               WorkingDirectory = "${repoDir}/system/services/frontend/svelte";
-              ExecStart = "${pkgs.nodejs_22}/bin/npm run dev -- --host 0.0.0.0";
+              ExecStartPre = "${pkgs.nodejs_22}/bin/npm ci";
+              ExecStart = "${pkgs.nodejs_22}/bin/npm run dev";
 
               Restart = "always";
               RestartSec = 2;
