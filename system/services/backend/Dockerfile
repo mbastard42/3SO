@@ -34,18 +34,3 @@ RUN apt-get purge -y git unzip libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=build /app ./
 EXPOSE 8080
-
-# DISTROLESS ONE DAY
-
-# FROM dunglas/frankenphp:static-builder-musl-1 AS frankenphp
-# WORKDIR /go/src/app/dist/app
-# COPY --from=build /app ./
-# WORKDIR /go/src/app
-# ENV EMBED=dist/app/
-# RUN ./build-static.sh
-
-# FROM gcr.io/distroless/static AS prod
-# COPY --from=frankenphp /go/src/app/dist/frankenphp-linux-aarch64 /usr/local/bin/app
-# EXPOSE 80
-# ENTRYPOINT ["/usr/local/bin/app"]
-# CMD ["php-server"]

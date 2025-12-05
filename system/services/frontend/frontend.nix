@@ -32,6 +32,7 @@
           systemd.services."frontend-dev" = {
             description = "Frontend (SvelteKit) dev server";
             wantedBy = [ "multi-user.target" ];
+            wants = [ "network-online.target" ];
             after = [ "network-online.target" ];
 
             path = [

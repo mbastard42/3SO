@@ -1,83 +1,11 @@
 <script lang="ts">
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
-  
 	let { children } = $props();
-  </script>
-  
-  <svelte:head>
-	<link rel="icon" href={favicon} />
-  </svelte:head>
-  
-  <div class="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-	<header class="sticky top-0 z-20 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
-	  <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
-		<!-- Logo / titre -->
-		<div class="flex items-center gap-2">
-		  <div class="flex flex-col leading-tight">
-			<span class="text-sm font-medium">Dev console</span>
-		  </div>
-		</div>
-  
-		<!-- Nav -->
-		<nav class="flex items-center gap-3 text-xs">
-  
-		  <!-- Services externes -->
-		  <div class="flex items-center gap-2 overflow-x-auto scrollbar-none">
-			<a
-			  href="http://localhost:3001"
-			  target="_blank"
-			  rel="noreferrer"
-			  class="inline-flex items-center gap-1.5 rounded-full bg-slate-900/80 px-2.5 py-1.5
-					 text-[11px] text-slate-200 border border-slate-700/70 hover:bg-slate-800 hover:border-slate-500
-					 whitespace-nowrap transition-colors"
-			>
-			  <span class="h-1.5 w-1.5 rounded-full bg-sky-400"></span>
-			  Grafana
-			</a>
-  
-			<a
-			  href="http://localhost:8069"
-			  target="_blank"
-			  rel="noreferrer"
-			  class="inline-flex items-center gap-1.5 rounded-full bg-slate-900/80 px-2.5 py-1.5
-					 text-[11px] text-slate-200 border border-slate-700/70 hover:bg-slate-800 hover:border-slate-500
-					 whitespace-nowrap transition-colors"
-			>
-			  <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-			  Odoo
-			</a>
-  
-			<a
-			  href="http://localhost:9001"
-			  target="_blank"
-			  rel="noreferrer"
-			  class="inline-flex items-center gap-1.5 rounded-full bg-slate-900/80 px-2.5 py-1.5
-					 text-[11px] text-slate-200 border border-slate-700/70 hover:bg-slate-800 hover:border-slate-500
-					 whitespace-nowrap transition-colors"
-			>
-			  <span class="h-1.5 w-1.5 rounded-full bg-lime-400"></span>
-			  MinIO
-			</a>
-  
-			<a
-			  href="http://localhost:8000"
-			  target="_blank"
-			  rel="noreferrer"
-			  class="inline-flex items-center gap-1.5 rounded-full bg-slate-900/80 px-2.5 py-1.5
-					 text-[11px] text-slate-200 border border-slate-700/70 hover:bg-slate-800 hover:border-slate-500
-					 whitespace-nowrap transition-colors"
-			>
-			  <span class="h-1.5 w-1.5 rounded-full bg-violet-400"></span>
-			  Symfony API
-			</a>
-		  </div>
-		</nav>
-	  </div>
-	</header>
-  
-	<main class="flex-1">
-	  {@render children()}
-	</main>
-  </div>
+</script>
 
+<svelte:head>
+<link rel="icon" href={favicon} />
+</svelte:head>
+  
+{@render children()}

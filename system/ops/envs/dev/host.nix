@@ -38,6 +38,7 @@
     curl
     wget
     vim
+    gnumake
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];

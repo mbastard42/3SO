@@ -15,12 +15,15 @@
       };
 
       modules = [
-
         ./ops/hosts/gandi/hardware-configuration.nix
         ./ops/hosts/gandi/gandicloud.nix
         ./ops/envs/dev/host.nix
 
         (import ./services/frontend/frontend.nix).modules.dev
+        (import ./services/backend/backend.nix).modules.dev
+        (import ./services/admin/admin.nix).modules.dev
+        (import ./services/databases/postgres.nix).modules.dev
+        (import ./services/databases/minio.nix).modules.dev
       ];
     };
   };
