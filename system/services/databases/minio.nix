@@ -7,16 +7,16 @@
         backendBucket = secret.PG_BACKEND_DB;
 
         mkPolicy = bucket: actions: {
-          Version = "2012-10-17";
+          Version   = "2012-10-17";
           Statement = [
             {
-              Effect = "Allow";
-              Action = [ "s3:ListBucket" ];
+              Effect   = "Allow";
+              Action   = [ "s3:ListBucket" ];
               Resource = [ "arn:aws:s3:::${bucket}" ];
             }
             {
-              Effect = "Allow";
-              Action = actions;
+              Effect   = "Allow";
+              Action   = actions;
               Resource = [ "arn:aws:s3:::${bucket}/*" ];
             }
           ];
@@ -79,9 +79,9 @@
       {
         systemd.services.minio = {
           description = "MinIO object storage";
-          wantedBy = [ "multi-user.target" ];
-          wants = [ "network-online.target" ];
-          after = [ "network-online.target" ];
+          wantedBy    = [ "multi-user.target" ];
+          wants       = [ "network-online.target" ];
+          after       = [ "network-online.target" ];
           
           path = [
             pkgs.minio
@@ -132,12 +132,12 @@
           };
 
           serviceConfig = {
-            Type      = "oneshot";
-            ExecStart = minioInitScript;
-            Restart = "on-failure";
-            RestartSec = 2;
+            Type                  = "oneshot";
+            ExecStart             = minioInitScript;
+            Restart               = "on-failure";
+            RestartSec            = 2;
             StartLimitIntervalSec = 60;
-            StartLimitBurst = 10;
+            StartLimitBurst       = 10;
           };
         };
       };

@@ -2,6 +2,7 @@ rec {
 
   # GLOBAL
   HOST = "127.0.0.1";
+  HTTPS_HOSTNAME = "preprod.local";
 
   # POSTGRES
   POSTGRES_PORT = "5432";
